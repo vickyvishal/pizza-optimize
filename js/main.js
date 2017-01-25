@@ -501,10 +501,17 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
-  for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+  var pizzaHolder = new Array();  
+  var pizzaLength = items.length;//We do not need to find the item length everytime the loop runs
+  var phaseCalc = document.body.scrollTop / 1250;//We do not need to run something whose value is constant everytime the loop runs
+  
+  for (var i = 0; i < pizzaLength; i++) { //this loop will specifically run to store the phase value
+    var phase = Math.sin((phaseCalc) + (i % 5));
+    pizzaHolder.push(phase);
+  }
+  
+  for (var i = 0; i <pizzaLength; i++) {
+    items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -517,6 +524,7 @@ function updatePositions() {
   }
 }
 
+	var items;
 // runs updatePositions on scroll
 window.addEventListener('scroll', updatePositions);
 
@@ -524,7 +532,7 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
+  for (var i = 0; i < 35; i++) { //35 pizza can only accomodate in one window screen
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
@@ -534,5 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
   }
+  //so that it is not called everytime scrolling happens, so moved items var out of updatePositions
+  items = document.getElementsByClassName('mover') //getElementsByClassName over querySelectorAll
   updatePositions();
 });
